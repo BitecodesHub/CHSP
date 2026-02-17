@@ -1,0 +1,253 @@
+<button class="menu-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">&#9776;</button>
+<div class="app">
+    <aside class="sidebar">
+        <div class="sb-hdr">
+            <h2>CHSP</h2>
+            <p>Allied Health Mendatory Compliances</p>
+        </div>
+        <nav class="sb-nav">
+            <div class="nlbl">Dashboard</div>
+            <button class="nbtn active" onclick="go('overview',this)"><span class="ic"
+                    style="background:rgba(91,108,247,.12);color:#818cf8">O</span>Overview</button>
+            <button class="nbtn" onclick="go('people',this)"><span class="ic"
+                    style="background:rgba(34,201,176,.12);color:#22c9b0">P</span>By Person<span class="bc"
+                    id="ncPpl"></span></button>
+            <button class="nbtn" onclick="go('pending',this)"><span class="ic"
+                    style="background:rgba(245,158,11,.12);color:#f59e0b">!</span>Pending<span class="bc"
+                    id="ncPnd"></span></button>
+            <button class="nbtn" onclick="go('complete',this)"><span class="ic"
+                    style="background:rgba(16,185,129,.12);color:#10b981">&#10003;</span>Complete<span class="bc"
+                    id="ncCmp"></span></button>
+            <div class="nlbl">Analytics</div>
+            <button class="nbtn" onclick="go('risk',this)"><span class="ic"
+                    style="background:rgba(239,68,68,.12);color:#ef4444">R</span>Risk Assessment</button>
+            <button class="nbtn" onclick="go('heatmap',this)"><span class="ic"
+                    style="background:rgba(236,72,153,.12);color:#ec4899">H</span>Compliance Heatmap</button>
+            <button class="nbtn" onclick="go('gaps',this)"><span class="ic"
+                    style="background:rgba(59,130,246,.12);color:#3b82f6">G</span>Gap Analysis</button>
+            <button class="nbtn" onclick="go('workload',this)"><span class="ic"
+                    style="background:rgba(168,85,247,.12);color:#a855f7">W</span>Workload Balance</button>
+            <button class="nbtn" onclick="go('trends',this)"><span class="ic"
+                    style="background:rgba(34,201,176,.12);color:#22c9b0">I</span>Insights</button>
+            <div class="nlbl">Data</div>
+            <button class="nbtn" onclick="go('alldata',this)"><span class="ic"
+                    style="background:rgba(91,108,247,.12);color:#818cf8">D</span>All Records<span class="bc"
+                    id="ncAll"></span></button>
+        </nav>
+    </aside>
+    <main class="main">
+
+        <div class="sec active" id="s-overview">
+            <div class="ph">
+                <div>
+                    <h1><span>Overview</span></h1>
+                    <p>Document compliance summary across all records</p>
+                </div>
+                <div><button class="btn-e" onclick="exportCSV()">Export CSV</button></div>
+            </div>
+            <div class="kpi-grid" id="kG"></div>
+            <div class="cc" style="margin-bottom:18px">
+                <h3>Document Completion Rates</h3>
+                <div id="sBars"></div>
+            </div>
+            <div class="cg">
+                <div class="cc">
+                    <h3>Completion by Document Type</h3><canvas id="ch1"></canvas>
+                </div>
+                <div class="cc">
+                    <h3>Compliance Breakdown</h3><canvas id="ch2"></canvas>
+                </div>
+                <div class="cc">
+                    <h3>Records by Person Responsible</h3><canvas id="ch3"></canvas>
+                </div>
+                <div class="cc">
+                    <h3>Missing Documents Count</h3><canvas id="ch4"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="sec" id="s-people">
+            <div class="ph">
+                <div>
+                    <h1>By <span>Person</span></h1>
+                    <p>Click any card to view their records</p>
+                </div>
+            </div>
+            <div class="pg" id="pGrid"></div>
+            <div id="pTbl"></div>
+        </div>
+
+        <div class="sec" id="s-pending">
+            <div class="ph">
+                <div>
+                    <h1><span>Pending</span> Reports</h1>
+                    <p>Records with one or more missing documents</p>
+                </div>
+            </div>
+            <div class="fbar">
+                <input placeholder="Search by name, UID, SID..." id="pnS" oninput="rPnd()">
+                <select id="pnD" onchange="rPnd()">
+                    <option value="">All Missing Types</option>
+                    <option value="0">Missing Assessment</option>
+                    <option value="1">Missing Care Plan</option>
+                    <option value="2">Missing Support Plan</option>
+                    <option value="3">Missing Site Report</option>
+                </select>
+                <select id="pnP" onchange="rPnd()">
+                    <option value="">All Persons</option>
+                </select>
+            </div>
+            <div id="pnTbl"></div>
+        </div>
+
+        <div class="sec" id="s-complete">
+            <div class="ph">
+                <div>
+                    <h1><span>Complete</span> Records</h1>
+                    <p>All 4 documents submitted</p>
+                </div>
+            </div>
+            <div class="fbar"><input placeholder="Search by name, UID, SID..." id="cmS" oninput="rCmp()"></div>
+            <div id="cmTbl"></div>
+        </div>
+
+        <div class="sec" id="s-risk">
+            <div class="ph">
+                <div>
+                    <h1>Risk <span>Assessment</span></h1>
+                    <p>Records scored and categorized by compliance risk</p>
+                </div>
+            </div>
+            <div class="kpi-grid" id="riskKpi"></div>
+            <div class="cg">
+                <div class="cc">
+                    <h3>Risk Level Distribution</h3><canvas id="riskCh1"></canvas>
+                </div>
+                <div class="cc">
+                    <h3>Risk Breakdown by Person</h3><canvas id="riskCh2"></canvas>
+                </div>
+            </div>
+            <div class="fbar">
+                <select id="riskF" onchange="rRisk()">
+                    <option value="">All Risk Levels</option>
+                    <option value="high">High Risk</option>
+                    <option value="medium">Medium Risk</option>
+                    <option value="low">Low Risk</option>
+                </select>
+                <input placeholder="Search..." id="riskS" oninput="rRisk()">
+            </div>
+            <div id="riskTbl"></div>
+        </div>
+
+        <div class="sec" id="s-heatmap">
+            <div class="ph">
+                <div>
+                    <h1>Compliance <span>Heatmap</span></h1>
+                    <p>Person vs document completion rates</p>
+                </div>
+            </div>
+            <div class="cc">
+                <h3>Completion Rate Matrix</h3>
+                <div id="hmGrid"></div>
+            </div>
+            <div class="cg" style="margin-top:16px">
+                <div class="cc">
+                    <h3>Per-Document Completion by Person</h3><canvas id="hmCh1"></canvas>
+                </div>
+                <div class="cc">
+                    <h3>Document Breakdown (Stacked)</h3><canvas id="hmCh2"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="sec" id="s-gaps">
+            <div class="ph">
+                <div>
+                    <h1>Gap <span>Analysis</span></h1>
+                    <p>Most common missing document combinations</p>
+                </div>
+            </div>
+            <div class="cg">
+                <div class="cc">
+                    <h3>Missing Combinations</h3><canvas id="gapCh1"></canvas>
+                </div>
+                <div class="cc">
+                    <h3>Document Co-occurrence</h3><canvas id="gapCh2"></canvas>
+                </div>
+            </div>
+            <div class="cc" style="margin-top:14px">
+                <h3>Top Missing Patterns</h3>
+                <div id="gapPatterns"></div>
+            </div>
+        </div>
+
+        <div class="sec" id="s-workload">
+            <div class="ph">
+                <div>
+                    <h1>Workload <span>Balance</span></h1>
+                    <p>Caseload distribution across team members</p>
+                </div>
+            </div>
+            <div class="kpi-grid" id="wlKpi"></div>
+            <div class="cg">
+                <div class="cc">
+                    <h3>Caseload per Person</h3><canvas id="wlCh1"></canvas>
+                </div>
+                <div class="cc">
+                    <h3>Completion Efficiency</h3><canvas id="wlCh2"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="sec" id="s-trends">
+            <div class="ph">
+                <div>
+                    <h1>Key <span>Insights</span></h1>
+                    <p>Notable findings from the data</p>
+                </div>
+            </div>
+            <div id="insightsArea"></div>
+            <div class="cg" style="margin-top:16px">
+                <div class="cc">
+                    <h3>Document Filing Funnel</h3><canvas id="fnlCh"></canvas>
+                </div>
+                <div class="cc">
+                    <h3>Compliance Radar</h3><canvas id="radarCh"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="sec" id="s-alldata">
+            <div class="ph">
+                <div>
+                    <h1>All <span>Records</span></h1>
+                    <p>Complete dataset with filtering and export</p>
+                </div>
+                <div><button class="btn-e" onclick="exportCSV()">Export CSV</button></div>
+            </div>
+            <div class="fbar">
+                <input placeholder="Search by name, UID, SID..." id="aS" oninput="rAll()">
+                <select id="aP" onchange="rAll()">
+                    <option value="">All Persons</option>
+                    <option value="__un__">Unassigned</option>
+                </select>
+                <select id="aSt" onchange="rAll()">
+                    <option value="">All Statuses</option>
+                    <option value="c">Complete</option>
+                    <option value="p">Partial</option>
+                    <option value="x">Critical (3+)</option>
+                </select>
+                <select id="aSo" onchange="rAll()">
+                    <option value="uid-d">UID Desc</option>
+                    <option value="uid-a">UID Asc</option>
+                    <option value="nm-a">Name A-Z</option>
+                    <option value="nm-d">Name Z-A</option>
+                    <option value="ms-d">Most Missing</option>
+                    <option value="ms-a">Least Missing</option>
+                </select>
+            </div>
+            <div id="aTbl"></div>
+        </div>
+
+    </main>
+</div>
