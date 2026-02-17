@@ -21,7 +21,8 @@ To enable GitHub Pages for this repository:
 The GitHub Actions workflow (`.github/workflows/deploy.yml`) will:
 - Trigger on pushes to `main` or `master` branches
 - Can also be manually triggered via workflow_dispatch
-- Deploy the entire repository content (including `index.html`) to GitHub Pages
+- Deploy only the necessary files (`index.html` and templates) to GitHub Pages
+- Includes `.nojekyll` file to prevent Jekyll processing and avoid redirects
 
 ### Accessing the Dashboard
 
@@ -50,13 +51,17 @@ This will update the `index.html` file with the latest data from `Report.xlsx`.
 
 ## Files
 
+### Deployed Files
 - `index.html` - The main dashboard page
-- `Report.xlsx` - Source data file
-- `build_dashboard.py` - Script to build the dashboard
-- `generate_dashboard.py` - Alternative dashboard generation script
+- `.nojekyll` - Prevents Jekyll processing on GitHub Pages
 - `tmpl_head.html` - HTML head template
 - `tmpl_body.html` - HTML body template
 - `tmpl_script.js` - JavaScript template
+
+### Development Files (not deployed)
+- `Report.xlsx` - Source data file
+- `build_dashboard.py` - Script to build the dashboard
+- `generate_dashboard.py` - Alternative dashboard generation script
 
 ## License
 
