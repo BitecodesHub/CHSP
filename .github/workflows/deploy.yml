@@ -34,8 +34,10 @@ jobs:
           mkdir -p _site
           cp index.html _site/
           cp .nojekyll _site/
-          cp tmpl_*.html _site/ 2>/dev/null || true
-          cp tmpl_*.js _site/ 2>/dev/null || true
+          # Copy template files if they exist (they're embedded in index.html)
+          [ -f tmpl_head.html ] && cp tmpl_head.html _site/ || echo "tmpl_head.html not found, skipping"
+          [ -f tmpl_body.html ] && cp tmpl_body.html _site/ || echo "tmpl_body.html not found, skipping"
+          [ -f tmpl_script.js ] && cp tmpl_script.js _site/ || echo "tmpl_script.js not found, skipping"
       
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
